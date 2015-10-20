@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+cat << EOF | sh &
+if [ -f .warmup ]; then
+  sleep 5
+  until \$(curl -o /dev/null -s -I -f http://${WARMUP_HOST:-localhost}:$PORT); do
+    sleep 5
+  done
+
+  cat .warmup | while read path; do
+    echo -n "[warmup] calling: $path"
+    curl $WARMUP_CURL_OPTS -L "http://${WARMUP_HOST:-localhost}:$PORT/$path" >/dev/null 2>&1
+    echo " -> done"
+  done
+fi
+EOF
+pid=$!
+
+trap "kill -9 $pid; exit" SIGTERM SIGKILL SIGINT SIGQUIT SIGHUP
+
+$@
+
+kill -9 $pid
