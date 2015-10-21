@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-WARMUP_REPEAT=${WARMUP_REPEAT:1}
-WARMUP_HOST=${WARMUP_HOST:localhost}
+WARMUP_REPEAT=${WARMUP_REPEAT:-1}
+WARMUP_HOST=${WARMUP_HOST:-localhost}
 
 cat << EOF | sh &
 if [ -f .warmup ]; then
