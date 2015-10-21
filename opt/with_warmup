@@ -1,23 +1,27 @@
 #!/usr/bin/env bash
 
+WARMUP_REPEAT=${WARMUP_REPEAT:1}
+WARMUP_HOST=${WARMUP_HOST:localhost}
+
 cat << EOF | sh &
 if [ -f .warmup ]; then
   sleep 5
-  until \$(curl -o /dev/null -s -I -f http://${WARMUP_HOST:-localhost}:$PORT); do
+  until \$(curl -o /dev/null -s -I -f http://$WARMUP_HOST:$PORT); do
     sleep 5
   done
 
   cat .warmup | while read path; do
-    echo -n "[warmup] calling: \$path"
-    curl $WARMUP_CURL_OPTS -L "http://${WARMUP_HOST:-localhost}:$PORT/\$path" >/dev/null 2>&1
-    echo " -> done"
+    echo "[warmup] calling: \$path"
+    for i in \$(seq 1 $WARMUP_REPEAT); do
+      curl $WARMUP_CURL_OPTS -L "http://$WARMUP_HOST:$PORT/\$path" >/dev/null 2>&1
+    done
   done
 fi
 EOF
 pid=$!
 
-trap "kill -0 $pid && kill -9 $pid; exit" SIGTERM SIGKILL SIGINT SIGQUIT SIGHUP
+trap "kill $pid >/dev/null 2>&1; exit" SIGTERM SIGKILL SIGINT SIGQUIT SIGHUP
 
 $@
 
-kill -0 $pid && kill -9 $pid
+kill $pid >/dev/null 2>&1
