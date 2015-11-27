@@ -27,6 +27,7 @@ install_java_with_overlay() {
     install_java ${buildDir} ${javaVersion}
     jdk_overlay ${buildDir}
     status ${buildDir}
+    status $(ls /tmp/staged/app/)
     status_done
   fi
 }
