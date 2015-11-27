@@ -63,6 +63,7 @@ install_java() {
   export PATH="${jdkDir}/bin:${PATH}"
   status ${jdkDir}
   status $(ls /tmp/staged/app/.jdk/jre/lib/amd64/server/)
+  status $(ls /usr/lib/jvm/)
   _install_tools ${baseDir}
   _create_profile_script ${baseDir}
   _create_export_script ${JAVA_HOME} "$(pwd)"
