@@ -26,6 +26,7 @@ install_java_with_overlay() {
     status_pending "Installing OpenJDK ${javaVersion}"
     install_java ${buildDir} ${javaVersion}
     jdk_overlay ${buildDir}
+    status ${buildDir}
     status_done
   fi
 }
